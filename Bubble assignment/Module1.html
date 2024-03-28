@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .arrow {
+            position: relative;
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-right: 40px solid black;
+        }
+
+        .face {
+            position: absolute;
+            left: 40px;
+            width: 50px;
+            height: 10px;
+            background-color: black;
+            margin-top: -5px;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #entity {
+            padding: 20px;
+            width: 50%;
+            height: 50%;
+            border: 2px solid black;
+        }
+
+        .circle {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            height: 20%;
+            cursor: pointer;
+        }
+
+        .arrowFace {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="entity">
+            <div class="circle" id="circle1">
+                <div class="arrowFace" style="background-color:yellow "></div>
+                <div class="arrow" id="arrow1">
+                    <div class="face"></div>
+                </div>
+            </div>
+            <div class="circle" id="circle2">
+                <div class="arrowFace" style="background-color:blue "></div>
+                <div class="arrow" id="arrow2">
+                    <div class="face"></div>
+                </div>
+            </div>
+            <div class="circle" id="circle3">
+                <div class="arrowFace" style="background-color:red "></div>
+                <div class="arrow" id="arrow3">
+                    <div class="face"></div>
+                </div>
+            </div>
+            <div class="circle" id="circle4">
+                <div class="arrowFace" style="background-color:green "></div>
+                <div class="arrow" id="arrow4">
+                    <div class="face"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button onclick="reset()">Reset</button>
+
+    <script>
+        const circles = document.querySelectorAll('.circle');
+const circleColors = Array.from(circles).map(circle => circle.querySelector('.arrowFace').style.backgroundColor);
+let animations = {};
+
+circles.forEach(circle => {
+    circle.addEventListener('click', () => {
+        moveArrow(circle);
+    });
+});
+
+function moveArrow(targetCircle) {
+    const arrowId = targetCircle.getAttribute('id').replace('circle', 'arrow');
+    const arrow = document.getElementById(arrowId);
+    const arrowFace = targetCircle.querySelector('.arrowFace');
+    const circleColor = arrowFace.style.backgroundColor;
+
+    if (animations[arrowId]) {
+        animations[arrowId].cancel();
+    }
+
+    animations[arrowId] = arrow.animate([
+        { transform: 'translateX(0px)' },
+        { transform: `translateX(${targetCircle.getBoundingClientRect().left - arrow.getBoundingClientRect().left}px)` }
+    ], {
+        duration: 1000,
+        fill: 'forwards'
+    });
+
+    animations[arrowId].onfinish = () => {
+        arrowFace.style.backgroundColor = 'gray';
+    };
+}
+
+
+function reset() {
+    Object.values(animations).forEach(animation => {
+        animation.cancel();
+    });
+
+    circles.forEach((circle, index) => {
+        const arrowFace = circle.querySelector('.arrowFace');
+        arrowFace.style.backgroundColor = circleColors[index];
+    });
+}
+
+    </script>
+    
+</body>
+
+</html>
